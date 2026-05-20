@@ -15,14 +15,14 @@ public class PostComment extends BaseEntity {
     @ManyToOne
     @JsonIgnore
     private Post post;
-    private String content;
+    private String body;
 
-    public PostComment(Post post, String content) {
+    public PostComment(Post post, String body) {
         this.post = post;
-        this.content = content;
+        this.body = body;
     }
 
     public void modify(String content) {
-        this.content = content;
+        this.body = content;
     }
 }
