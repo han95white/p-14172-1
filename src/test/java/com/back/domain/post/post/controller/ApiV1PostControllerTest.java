@@ -1,5 +1,7 @@
 package com.back.domain.post.post.controller;
 
+import com.back.domain.post.post.entity.Post;
+import com.back.domain.post.post.service.PostService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,25 +9,37 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.annotation.Transactional;
 
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ActiveProfiles("test") // 테스트 환경에서는 test 프로파일을 활성화합니다.
 @SpringBootTest // 스프링부트 테스트 클래스임을 나타냅니다.
 @AutoConfigureMockMvc // MockMvc를 자동으로 설정합니다.
-@Transactional // 각 테스트 메서드가 종료되면 롤백됩니다.
+// 각 테스트 메서드가 종료되면 롤백됩니다.
 public class ApiV1PostControllerTest {
     @Autowired
     private MockMvc mvc; // MockMvc를 주입받습니다.
+
+    @MockitoBean
+    private PostService postService;
 
     // 회원가입 테스트
     @Test
     @DisplayName("글 쓰기")
     void t1() throws Exception {
+        Post post = new Post("제목", "내용");
+        ReflectionTestUtils.setField(post, "id", 1);
+
+        when(postService.write(anyString(), anyString())).thenReturn(post);
+        when(postService.count()).thenReturn(1L);
+
         // 회원가입 요청을 보냅니다.
         ResultActions resultActions = mvc
                 .perform(
