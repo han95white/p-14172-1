@@ -80,9 +80,6 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(status().isOk());
-
-        resultActions
                 .andExpect(handler().handlerType(ApiV1PostController.class))
                 .andExpect(handler().methodName("modify"))
                 .andExpect(status().isOk())
@@ -107,9 +104,6 @@ public class ApiV1PostControllerTest {
                 .andDo(print());
 
         resultActions
-                .andExpect(status().isOk());
-
-        resultActions
                 .andExpect(handler().handlerType(ApiV1PostController.class))
                 .andExpect(handler().methodName("delete"))
                 .andExpect(status().isOk())
@@ -131,7 +125,6 @@ public class ApiV1PostControllerTest {
         Post post = postService.findById(id).get();
 
         resultActions
-                .andExpect(status().isOk())
                 .andExpect(handler().handlerType(ApiV1PostController.class))
                 .andExpect(handler().methodName("getItem"))
                 .andExpect(status().isOk())
