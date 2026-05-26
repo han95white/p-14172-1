@@ -37,7 +37,7 @@ public class ApiV1PostCommentControllerTest {
 
     @Test
     @DisplayName("댓글 단건조회")
-    void t10() throws Exception {
+    void t1() throws Exception {
         int postId = 1;
         int id = 1;
 
@@ -62,7 +62,7 @@ public class ApiV1PostCommentControllerTest {
 
 //    @Test
 //    @DisplayName("글 단건조회, 404")
-//    void t11() throws Exception {
+//    void t0() throws Exception {
 //        int postId = Integer.MAX_VALUE;
 //        int id = Integer.MAX_VALUE;
 //
@@ -79,5 +79,35 @@ public class ApiV1PostCommentControllerTest {
 //                .andExpect(jsonPath("$.resultCode").value("404-1"))
 //                .andExpect(jsonPath("$.msg").value("해당 데이터가 존재하지 않습니다."));
 //    }
+
+    @Test
+    @DisplayName("댓글 다건조회")
+    void t2() throws Exception {
+        int postId = 1;
+
+        ResultActions resultActions = mvc
+                .perform(
+                        get("/api/v1/posts/%d/comments".formatted(postId))
+                )
+                .andDo(print());
+
+        Post post = postService.findById(postId).get();
+        List<PostComment> comments = post.getComments();
+
+        resultActions
+                .andExpect(handler().handlerType(ApiV1PostCommentController.class))
+                .andExpect(handler().methodName("getItems"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(comments.size()));
+
+        for (int i = 0; i < comments.size(); i++) {
+            PostComment postComment = comments.get(i);
+            resultActions
+                    .andExpect(jsonPath("$[%d].id".formatted(i)).value(postComment.getId()))
+                    .andExpect(jsonPath("$[%d].createDate".formatted(i)).value(Matchers.startsWith(postComment.getCreateDate().toString().substring(0, 20))))
+                    .andExpect(jsonPath("$[%d].modifyDate".formatted(i)).value(Matchers.startsWith(postComment.getModifyDate().toString().substring(0, 20))))
+                    .andExpect(jsonPath("$[%d].content".formatted(i)).value(postComment.getContent()));
+        }
+    }
 
 }
