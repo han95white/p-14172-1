@@ -31,4 +31,8 @@ public class MemberService {
     public Optional<Member> findLatest() {
         return memberRepository.findTopByOrderByIdDesc();
     }
+
+    public Optional<Member> findById(int id) {
+        return memberRepository.findById(id);
+    }
 }
